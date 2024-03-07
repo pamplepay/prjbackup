@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>약국 목록</title>
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <script src="{% static 'js/index.js' %}" defer></script>
+    </head>
+<body>
+    <script type="text/javascript">
+        var regions = JSON.parse('{{ regions_json|safe }}');
+    </script>
+    <div class="divtitle">약국 관리</div>
+    <div class="divmenu">
+        <span>파트</span>
+        <SELECT id="selparts" name="selparts">
+            {% for part in parts %}
+            <option value="{{ part.id }}">{{ part.name }}</option>
+            {% endfor %}
+        </SELECT>
+        <button class="btnadd" data-toggle="modal" data-target="#addPharmacyModal">추가</button>
+        <button class="btndelete">삭제</button>
+    </div>
+
+    <!-- Modal Structure -->
+    <div class="modal fade" id="addPharmacyModal" tabindex="-1" role="dialog" aria-labelledby="addPharmacyModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPharmacyModalLabel">약국 추가</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- AJAX를 통해 여기에 내용이 삽입됩니다 또는 직접 내용을 작성 -->
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="savePharmacy">저장</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="list_table">
+        <thead>
+            <tr>
+                <th><input type="checkbox"></th>
+                <th>약국명</th>
+                <th>사업자번호</th>
+                <th>대표자</th>
+                <th>연락처</th>
+                <th>지역</th>
+                <th>상세지역</th>
+                <th>계약일자</th>
+                <th>만기일자</th>
+                <th>구분</th>
+                <th>정가(원)</th>
+                <th>할인(원)</th>
+                <th>매출액(원)</th>
+                <th>원가(원)</th>
+                <th>손익(원)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pharmacy in page_obj %}
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td>{{ pharmacy.pharmacy }}</td>
+                    <td>{{ pharmacy.businessnum }}</td>
+                    <td>{{ pharmacy.owner }}</td>
+                    <td>{{ pharmacy.phonenum }}</td>
+                    <td>{{ pharmacy.region.name }}</td>
+                    <td>{{ pharmacy.detailregion }}</td>
+                    <td>{{ pharmacy.contractdate|date:"Y-m-d" }}</td>
+                    <td>{{ pharmacy.expirydate|date:"Y-m-d" }}</td>
+                    <td>{{ pharmacy.category }}</td>
+                    <td>{{ pharmacy.listprice }}</td>
+                    <td>{{ pharmacy.discount }}</td>
+                    <td>{{ pharmacy.sales }}</td>
+                    <td>{{ pharmacy.cost }}</td>
+                    <td>{{ pharmacy.profit }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; 처음</a>
+                <a href="?page={{ page_obj.previous_page_number }}">이전</a>
+            {% endif %}
+            
+            <span class="current">
+                페이지 {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">다음</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">마지막 &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</body>
+</html>
